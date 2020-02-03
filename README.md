@@ -6,7 +6,7 @@ Required
 ```
 pip3 install numpy
 ```
-build
+Run
 -----
 ```
 git clone https://github.com/SylvainDeker/Vehicle-ReIdentification.git
