@@ -6,6 +6,9 @@ Required
 ```
 pip3 install numpy
 ```
+This project used the data base VeRi from https://github.com/VehicleReId/VeRidataset .
+The folder goes in /data/VeRi_with_plate
+
 Run
 -----
 ```
