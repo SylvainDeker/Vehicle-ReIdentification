@@ -74,9 +74,11 @@ class ColorName:
 
 
 if __name__ == '__main__':
-    img = cv.imread("../data/VeRi_with_plate/image_query/0006_c015_00022375_0.jpg")
+    # img = cv.imread("../data/VeRi_with_plate/image_query/0006_c015_00022375_0.jpg")
     # img = cv.imread("../data/VeRi_with_plate/image_query/0300_c013_00078770_0.jpg")
     # img = cv.imread("../data/VeRi_with_plate/image_query/0002_c002_00030600_0.jpg")
+    # img = cv.imread("../data/VeRi_with_plate/image_query/0063_c016_00007580_0.jpg")
+    img = cv.imread("../data/VeRi_with_plate/image_query/0172_c011_00078830_0.jpg")
 
 
     img = cv.resize(img,(32,16))
