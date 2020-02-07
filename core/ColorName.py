@@ -12,15 +12,28 @@ class ColorName:
         self.kmeans = None
         self.k = 0
 
-
-    def extract_patchs(self,image_vehicule:ImageVehicle):
+    def preprocessing(self,image_vehicule:ImageVehicle):
         img = cv.imread(image_vehicule.image)
-        edge = 4
-        img2 = img[edge:img.shape[0]-edge:1,edge:img.shape[1]-edge:1]
-        lenPatch = img2.shape[0]*img2.shape[1]
-        desc = np.empty((lenPatch,3))
+        if img.shape[0]>img.shape[1]:
+            min = img.shape[1]
+        else:
+            min = img.shape[1]
 
-        desc = np.reshape(img2,(lenPatch,3))
+        edge = np.int32(0.2*min)
+        coef = 2
+        img = cv.blur(img, (coef,coef))
+        img = img[edge:img.shape[0]-edge:coef,edge:img.shape[1]-edge:coef]
+        # kernel = np.matrix([[0,1,0],[1,1,1],[0,1,0]],np.uint8)
+        #
+        # img = cv.erode(img,kernel,iterations = 1)
+        return img
+
+    def extract_patchs(self,img):
+        lenPatch = img.shape[0]*img.shape[1]
+        desc = np.empty((lenPatch,3))
+        desc = np.reshape(img,(lenPatch,3))
+        if len(desc)==0:
+            print("ERROR: Empty descriptor")
         return desc
 
 
@@ -76,29 +89,31 @@ class ColorName:
         NbImages = len(ArrayOfImageVehicle)
         colors = np.empty((NbImages,3))
         for i in range(NbImages):
-            desc = self.extract_patchs(ArrayOfImageVehicle[i])
-            self.fitKMeans(desc,4)
+            img = cn.preprocessing(ArrayOfImageVehicle[i])
+            desc = self.extract_patchs(img)
+            self.fitKMeans(desc,10)
             Xres,label_dominant = cn.bow_process(desc)
-            cv.imwrite("test_Xres.png",np.resize(Xres,(len(Xres),1,3)))
+            # cv.imwrite("test_Xres.png",np.resize(Xres,(len(Xres),1,3)))
             colors[i] = cn.resultColor(Xres)
+            print(i)
         return colors
 
 
 
 
 if __name__ == '__main__':
-    # img = cv.imread("../data/VeRi_with_plate/image_query/0006_c015_00022375_0.jpg")
-    # img = cv.imread("../data/VeRi_with_plate/image_query/0300_c013_00078770_0.jpg")
-    # img = cv.imread("../data/VeRi_with_plate/image_query/0002_c002_00030600_0.jpg")
-    # img = cv.imread("../data/VeRi_with_plate/image_query/0063_c016_00007580_0.jpg")
-    # img = cv.imread("../data/VeRi_with_plate/image_query/0172_c011_00078830_0.jpg")
-
+    # img = "../data/VeRi_with_plate/image_query/0006_c015_00022375_0.jpg"
+    # img = "../data/VeRi_with_plate/image_query/0300_c013_00078770_0.jpg"
+    # img = "../data/VeRi_with_plate/image_query/0002_c002_00030600_0.jpg"
+    # img = "../data/VeRi_with_plate/image_query/0063_c016_00007580_0.jpg"
+    # img = "../data/VeRi_with_plate/image_query/0172_c011_00078830_0.jpg"
     #
-    # img = cv.resize(img,(32,32))
-    # cv.imwrite("test_ref.png",img)
+    #
     # iv = ImageVehicle(img,"/chemin/video",((0,0,0,0,0,0)),42)
     # cn = ColorName()
-    # desc = cn.extract_patchs(iv)
+    # img = cn.preprocessing(iv)
+    # cv.imwrite("test_ref.png",img)
+    # desc = cn.extract_patchs(img)
     # cv.imwrite("test_desc.png",np.resize(desc,(desc.shape[0],1,3)))
     #
     # # print(desc)
@@ -114,21 +129,63 @@ if __name__ == '__main__':
     # # black = [0,0,0]
     # # X = np.array([rouge,jaune,vert,bleu,gray,white,black])
     #
-    # cn.fitKMeans(desc,4)
+    # cn.fitKMeans(desc,8)
     # Xres,label_dominant = cn.bow_process(desc)
     # cv.imwrite("test_Xres.png",np.resize(Xres,(len(Xres),1,3)))
     # result_color = cn.resultColor(Xres)
+    # print(result_color)
     # cv.imwrite("test_ResColor.png",np.resize(result_color,(1,1,3)))
     #
     # score = cn.score(result_color,label_dominant)
     # print("Score")
     # print(score)
 
-    print("--------trainColor--------------")
+    # print("--------trainColor--------------")
+    x=10
+    y=10
     cn = ColorName()
-    x=300
-    y=100
-    arrayOfImageVehicle = buildSetImageVehicle("../data/VeRi_with_plate/image_train/",x*y)
+    arrayOfImageVehicle = buildSetImageVehicle("../data/VeRi_with_plate/testperso/white/",x*y)
     colors = cn.trainColorName(arrayOfImageVehicle)
-    cv.imwrite("colors.png",np.resize(colors,(x,y,3)))
-    np.savetxt('colors.csv', colors, fmt='%i')
+    cv.imwrite("white.png",np.resize(colors,(x,y,3)))
+
+    cn = ColorName()
+    arrayOfImageVehicle = buildSetImageVehicle("../data/VeRi_with_plate/testperso/green/",x*y)
+    colors = cn.trainColorName(arrayOfImageVehicle)
+    cv.imwrite("green.png",np.resize(colors,(x,y,3)))
+
+    cn = ColorName()
+    arrayOfImageVehicle = buildSetImageVehicle("../data/VeRi_with_plate/testperso/marineblue/",x*y)
+    colors = cn.trainColorName(arrayOfImageVehicle)
+    cv.imwrite("marineblue.png",np.resize(colors,(x,y,3)))
+
+    cn = ColorName()
+    arrayOfImageVehicle = buildSetImageVehicle("../data/VeRi_with_plate/testperso/orange/",x*y)
+    colors = cn.trainColorName(arrayOfImageVehicle)
+    cv.imwrite("orange.png",np.resize(colors,(x,y,3)))
+
+    cn = ColorName()
+    arrayOfImageVehicle = buildSetImageVehicle("../data/VeRi_with_plate/testperso/red/",x*y)
+    colors = cn.trainColorName(arrayOfImageVehicle)
+    cv.imwrite("red.png",np.resize(colors,(x,y,3)))
+
+    cn = ColorName()
+    arrayOfImageVehicle = buildSetImageVehicle("../data/VeRi_with_plate/testperso/black/",x*y)
+    colors = cn.trainColorName(arrayOfImageVehicle)
+    cv.imwrite("black.png",np.resize(colors,(x,y,3)))
+
+    cn = ColorName()
+    arrayOfImageVehicle = buildSetImageVehicle("../data/VeRi_with_plate/testperso/yellow/",x*y)
+    colors = cn.trainColorName(arrayOfImageVehicle)
+    cv.imwrite("yellow.png",np.resize(colors,(x,y,3)))
+
+
+
+
+
+
+
+
+
+
+
+    # np.savetxt('colors.csv', colors, fmt='%i')
