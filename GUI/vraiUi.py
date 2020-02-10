@@ -71,6 +71,11 @@ def reIdentificationPlaceHolder():
         print(fileData[i][1])
         fillLineTable(window.resultsTable,i,data[0],data[1],fileData[i][0],fileData[i][1])
 
+def displayResultImage():
+    row = window.resultsTable.currentRow() # Index of Row
+    firstColumnInRow = window.resultsTable.item(row, 2) # returns QTableWidgetItem
+    text = firstColumnInRow.text() # content of this
+    changeLabelImage(window.imgRes,'./'+text)
 
 class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def __init__(self, *args, obj=None, **kwargs):
@@ -78,6 +83,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.setupUi(self)
         self.selectVehicleButton.clicked.connect(openFileNameDialog)
         self.startReid.clicked.connect(reIdentificationPlaceHolder)
+        self.resultsTable.clicked.connect(displayResultImage)
 
 
 app = QtWidgets.QApplication(sys.argv)
