@@ -24,6 +24,7 @@ pip install opencv-contrib-python==3.4.2.16
 pip install pandas
 pip install scipy
 pip install sklearn
+pip install pickle
 
 Reboot the machine
 
