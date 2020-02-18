@@ -20,17 +20,52 @@ def displayPLot(X:np.ndarray):
 
 
     # Reference
-    rouge = [255,0,0]
-    jaune = [255,255,0]
-    vert = [0,255,0]
-    bleu = [0,0,255]
-    jsp = [0,255,255]
-    white = [255,255,255]
-    jsp2 = [255,0,255]
-    black = [0,0,0]
-    ref = np.array([rouge,jaune,vert,bleu,jsp,jsp2,white,black])
-    colo = ref/255
-    ax.scatter(ref[:,0] ,ref[:,1], ref[:,2], marker='s',c=colo)
+    # rouge = [255,0,0]
+    # jaune = [255,255,0]
+    # vert = [0,255,0]
+    # bleu = [0,0,255]
+    # jsp = [0,255,255]
+    # white = [255,255,255]
+    # jsp2 = [255,0,255]
+    # black = [0,0,0]
+    # ref = np.array([rouge,jaune,vert,bleu,jsp,jsp2,white,black])
+    # colo = ref/255
+    # ax.scatter(ref[:,0] ,ref[:,1], ref[:,2], marker='s',c=colo)
+
+    ax.set_xlabel('X Label = RED')
+    ax.set_ylabel('Y Label = GREEN')
+    ax.set_zlabel('Z Label = BLUE')
+
+    plt.show()
+
+
+
+def displayPLotRGB(X:np.ndarray):
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
+    reds = np.array(X[:,0])
+    greens = np.array(X[:,1])
+    blues = np.array(X[:,2])
+    # rgb = np.concatenate((reds,greens,blues),axis=0)
+    # rgb = rgb.reshape((X.shape[0],3))
+
+    colo = np.array([reds,greens,blues]).T
+    colo = colo/255
+    ax.scatter(reds, greens, blues, marker='o',c=colo)
+
+
+    # Reference
+    # rouge = [255,0,0]
+    # jaune = [255,255,0]
+    # vert = [0,255,0]
+    # bleu = [0,0,255]
+    # jsp = [0,255,255]
+    # white = [255,255,255]
+    # jsp2 = [255,0,255]
+    # black = [0,0,0]
+    # ref = np.array([rouge,jaune,vert,bleu,jsp,jsp2,white,black])
+    # colo = ref/255
+    # ax.scatter(ref[:,0] ,ref[:,1], ref[:,2], marker='s',c=colo)
 
     ax.set_xlabel('X Label = RED')
     ax.set_ylabel('Y Label = GREEN')

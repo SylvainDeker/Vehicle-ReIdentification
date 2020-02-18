@@ -1,254 +1,41 @@
 import sys
 import numpy as np
-from ImageVehicle import ImageVehicle
-from buildSetImageVehicle import buildSetImageVehicle
-from displayPLot import displayPLot
-from histoPLot import histoPLot
 import cv2 as cv
 from sklearn.cluster import KMeans
-import pickle
+from ExtractColor import ExtractColor
 
 class ColorName:
-    """docstring for ImageVehicle."""
+    """docstring for ColorName."""
 
     def __init__(self):
-        self.kmeans = None
-        self.k = 0
+        self._ref_RGBcolor = [-1,0,0]
 
-    def preprocessing(self,image_vehicule:ImageVehicle):
-        img = cv.imread(image_vehicule.image)
-        if img.size ==0:
-            print("Error reading img")
-        if img.shape[0]>img.shape[1]:
-            min = img.shape[1]
-        else:
-            min = img.shape[0]
+    def loadimgref(self,imagefullpath):
+        exc = ExtractColor()
+        self._ref_RGBcolor = exc.getColorRGB(imagefullpath)
 
-        edge = np.int32(0.2*min)
-        coef = 3
-        img = cv.blur(img, (coef+1,coef+1))
-        img = img[edge:img.shape[0]-edge:coef,edge:img.shape[1]-edge:coef]
-        # kernel = np.matrix([[0,1,0],[1,1,1],[0,1,0]],np.uint8)
-        #
-        # img = cv.erode(img,kernel,iterations = 1)
-        return img
-
-    def extract_patchs(self,img):
-        lenPatch = img.shape[0]*img.shape[1]
-        desc = np.empty((lenPatch,3))
-        desc = np.reshape(img,(lenPatch,3))
-        if len(desc)==0:
-            print("ERROR: Empty descriptor")
-        return desc
-
-
-    def bow_process(self,desc,k):
-
-        kmeans = KMeans(n_clusters=k,random_state=0)
-        kmeans.fit(desc)
-        # print("Labels:")
-        # print(kmeans.labels_)
-        # print("Cluster Centers:")
-        # print(kmeans.cluster_centers_)
-        # print("Predict:")
-        # # desc = np.ones((16,3))*[255,255,0]
-        # # print(desc)
-        res = kmeans.predict(desc)
-        # print(res)
-        # print("Histo:")
-        hist,_ = np.histogram(res,bins=range(k+1))
-        # print(hist)
-        # print("Label dominant:")
-        label_dominant = np.argmax(hist)
-        # print(label_dominant)
-        # print("Couleur pertinante")
-        # print(kmeans.cluster_centers_[label_dominant])
-        Xres = np.empty((hist[label_dominant],3))
-        ctr = 0
-
-        for i in range(len(desc)):
-            if res[i]==label_dominant:
-                Xres[ctr] = desc[i]
-                ctr+=1
-
-        # cv.imwrite("test3.png",np.resize(Xres,(16,1,3)))
-        return Xres,label_dominant
-
-    def resultColor(self,Xres):
-        moyenne = np.mean(Xres,axis=0)
-        return moyenne
-
-    def extractColorsFromImages(self,ArrayOfImageVehicle):
-        NbImages = len(ArrayOfImageVehicle)
-        colors = np.empty((NbImages,3))
-        for i in range(NbImages):
-            img = cn.preprocessing(ArrayOfImageVehicle[i])
-            desc = self.extract_patchs(img)
-            # self.fitKMeansTest(desc,8)
-            Xres,label_dominant = cn.bow_process(desc,8)
-            # cv.imwrite("test_Xres.png",np.resize(Xres,(len(Xres),1,3)))
-            colors[i] = cn.resultColor(Xres)
-            print(i)
-        return colors
-
-    def fitKMEANS(self,k,colors):
-        self.k = k
-        self.kmeans = KMeans(n_clusters=self.k,random_state=0)
-        self.kmeans.fit(colors)
-
-
-    def getClusters(self):
-        return self.kmeans.cluster_centers_
-
-    def getCentroids(self):
-        colors_res = np.zeros((self.k,3))
-
-        div = np.zeros((self.k,1))+1
-        for i in range(len(colors)):
-            div[res[i]] = div[res[i]]+1;
-            colors_res[res[i]] = colors_res[res[i]] + colors[i]
-
-        return colors_res/div
-
-    def saveKMeans(self,filename):
-        pickle.dump(self.kmeans, open(filename, 'wb'))
-
-    def loadKMeans(self,filename):
-        self.kmeans = pickle.load(open(filename, 'rb'))
-        return self.kmeans
-
-    def init(self):
-        self.loadKMeans("400.kmns")
-
-    def predict(self,imageVehicle):
-        img = self.preprocessing(imageVehicle)
-        desc = self.extract_patchs(img)
-        Xres,label_dominant = cn.bow_process(desc,k=8)
-        result_color = cn.resultColor(Xres)
-        label = self.kmeans.predict(np.resize(result_color,(1,3)))
-        score = np.linalg.norm(result_color - self.kmeans.cluster_centers_[label][0])
-        return self.kmeans.cluster_centers_[label][0],score
-
+    def compareTo(self,imagefullpath):
+        """Provide a score between 0 and 1, 1 = same color"""
+        exc = ExtractColor()
+        rgbcolor = exc.getColorRGB(imagefullpath)
+        return 1 - np.linalg.norm(np.array(rgbcolor) - np.array(self._ref_RGBcolor))/(np.sqrt(255*255*3))
 
 
 if __name__ == '__main__':
-    # img = "../data/VeRi_with_plate/image_query/0006_c015_00022375_0.jpg"
-    # img = "../data/VeRi_with_plate/image_query/0300_c013_00078770_0.jpg"
-    # img = "../data/VeRi_with_plate/image_query/0002_c002_00030600_0.jpg"
-    # img = "../data/VeRi_with_plate/image_query/0063_c016_00007580_0.jpg"
-    # img = "../data/VeRi_with_plate/image_query/0172_c011_00078830_0.jpg"
-    #
-    #
-    # iv = ImageVehicle(img,"/chemin/video",((0,0,0,0,0,0)),42)
-    # img = cv.imread(img)
-    # cn = ColorName()
-    # img = cn.preprocessing(iv)
-    # cv.imwrite("test_ref.png",img)
-    # desc = cn.extract_patchs(img)
-    # cv.imwrite("test_desc.png",np.resize(desc,(desc.shape[0],1,3)))
-    #
-    # # print(desc)
-    # print("----------KMMEANS Test-----------")
-    # # Example of clusters
-    # rouge = [255,0,0]
-    # jaune = [255,255,0]
-    # vert = [0,255,0]
-    # bleu = [0,0,255]
-    #
-    # white = [255,255,255]
-    # gray = [128,128,128]
-    # black = [0,0,0]
-    # X = np.array([rouge,jaune,vert,bleu,gray,white,black])
-    #
-    #
-    # Xres,label_dominant = cn.bow_process(desc,5)
-    # cv.imwrite("test_Xres.png",np.resize(Xres,(len(Xres),1,3)))
-    # result_color = cn.resultColor(Xres)
-    # print(result_color)
-    # cv.imwrite("test_ResColor.png",np.resize(result_color,(1,1,3)))
-    #
-    # displayPLot(desc[0:len(desc):1])
-    # displayPLot(Xres[0:len(Xres):1])
+    ref = "../data/VeRi_with_plate/image_query/0005_c004_00077625_0.jpg"
+    img = "../data/VeRi_with_plate/image_query/0005_c003_00077670_0.jpg"
 
-
-    # print("--------trainColor--------------")
-    # x=6
-    # y=6
-    # cn = ColorName()
-    # arrayOfImageVehicle = buildSetImageVehicle("../data/VeRi_with_plate/testperso/white/",x*y)
-    # colors = cn.extractColorsFromImages(arrayOfImageVehicle)
-    # print(np.linalg.norm(colors - (74,145,63))/(x*y))
-    # cv.imwrite("white.png",np.resize(colors,(x,y,3)))
-    #
-    # cn = ColorName()
-    # arrayOfImageVehicle = buildSetImageVehicle("../data/VeRi_with_plate/testperso/green/",x*y)
-    # colors = cn.extractColorsFromImages(arrayOfImageVehicle)
-    # print(np.linalg.norm(colors - (74,145,63))/(x*y))
-    # cv.imwrite("green.png",np.resize(colors,(x,y,3)))
-    #
-    # cn = ColorName()
-    # arrayOfImageVehicle = buildSetImageVehicle("../data/VeRi_with_plate/testperso/marineblue/",x*y)
-    # colors = cn.extractColorsFromImages(arrayOfImageVehicle)
-    # print(np.linalg.norm(colors - (74,145,63))/(x*y))
-    # cv.imwrite("marineblue.png",np.resize(colors,(x,y,3)))
-    #
-    # cn = ColorName()
-    # arrayOfImageVehicle = buildSetImageVehicle("../data/VeRi_with_plate/testperso/orange/",x*y)
-    # colors = cn.extractColorsFromImages(arrayOfImageVehicle)
-    # print(np.linalg.norm(colors - (74,145,63))/(x*y))
-    # cv.imwrite("orange.png",np.resize(colors,(x,y,3)))
-    #
-    # cn = ColorName()
-    # arrayOfImageVehicle = buildSetImageVehicle("../data/VeRi_with_plate/testperso/red/",x*y)
-    # colors = cn.extractColorsFromImages(arrayOfImageVehicle)
-    # print(np.linalg.norm(colors - (74,145,63))/(x*y))
-    # cv.imwrite("red.png",np.resize(colors,(x,y,3)))
-    #
-    # cn = ColorName()
-    # arrayOfImageVehicle = buildSetImageVehicle("../data/VeRi_with_plate/testperso/black/",x*y)
-    # colors = cn.extractColorsFromImages(arrayOfImageVehicle)
-    # print(np.linalg.norm(colors - (74,145,63))/(x*y))
-    # cv.imwrite("black.png",np.resize(colors,(x,y,3)))
-    #
-    # cn = ColorName()
-    # arrayOfImageVehicle = buildSetImageVehicle("../data/VeRi_with_plate/testperso/yellow/",x*y)
-    # colors = cn.extractColorsFromImages(arrayOfImageVehicle)
-    # print(np.linalg.norm(colors - (74,145,63))/(x*y))
-    # cv.imwrite("yellow.png",np.resize(colors,(x,y,3)))
-
-
-    # x = 300
-    # y = 100
-    # cn = ColorName()
-    # arrayOfImageVehicle = buildSetImageVehicle("../data/VeRi_with_plate/image_test/",x*y)
-    # colors = cn.extractColorsFromImages(arrayOfImageVehicle)
-    # np.savetxt('colors.csv', colors, fmt='%i')
-    # cv.imwrite("colors.png",np.resize(colors,(x,y,3)))
-
-
-
-    # cn = ColorName()
-    # colors = np.loadtxt("colors.csv")
-    # res = cn.fitKMEANS(400,colors)
-    # cn.saveKMeans("400.kmns")
-    # cv.imwrite("colors.png",np.resize(res,(25,16,3)))
-
-    # cn = ColorName()
-    # cn.loadKMeans("400.kmns")
-    # # res = cn.fitKMEANS(400,colors)
-    # res = cn.getClusters()
-    # cv.imwrite("colors.png",np.resize(res,(16,25,3)))
-
-    # print(np.int32(res))
-
-    img = "../data/VeRi_with_plate/image_query/0172_c011_00078830_0.jpg"
-
-    img2 = cv.imread(img)
-    cv.imwrite("test_ref.png",img2)
     cn = ColorName()
-    cn.init()
-    iv = ImageVehicle(img,"/chemin/video",((0,0,0,0,0,0)),42)
-    res,score = cn.predict(iv)
-    print(res)
-    print(score/255)
-    cv.imwrite("test_ResColor.png",np.resize(res,(1,1,3)))
+    cn.loadimgref(ref)
+    score = cn.compareTo(img)
+    print("score :" + str(score))
+
+    # Smallest Score ever 0
+    c = [0,0,0]
+    cv.imwrite("Allblack.png",np.resize(c,(100,100,3)))
+    c = [255,255,255]
+    cv.imwrite("AllWhite.png",np.resize(c,(100,100,3)))
+
+    cn.loadimgref("Allblack.png")
+    score = cn.compareTo("AllWhite.png")
+    print("score :" + str(score))
