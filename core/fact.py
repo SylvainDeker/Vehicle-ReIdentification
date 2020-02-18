@@ -1,5 +1,6 @@
 import numpy as np
 import pickle
+from ColorName import ColorName
 
 import descripteurSift as sift
 
@@ -17,8 +18,11 @@ def initialiserListeImageVehicule():
     return null
 
 def calculerFact(imageCherchee,imageRef):
+    cn = ColorName()
+    cn.loadimgref(imageRef)
+    # retourne un score entre 0 et 1, 1 = ressemblance absolue
+    scoreCN = cn.compareTo(imageCherchee)
     # TODO:
-
     #Distances euclidienne entre les 3 descripteurs
     #score = 0.1 * scoreSift + 0.2*scoreCN + 0.3*scoreGoogleNet
     #return score
