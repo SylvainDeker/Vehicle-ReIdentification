@@ -4,7 +4,7 @@ import numpy as np
 class ImageVehicle:
     """docstring for ImageVehicle."""
 
-    def __init__(self, image:np.ndarray, pathVideo:str, apparitionTime:((int,int,int,int,int,int)),id:int ):
+    def __init__(self, image:str, pathVideo:str, apparitionTime:((int,int,int,int,int,int)),id:int ):
 
         self._image = image
         self._pathVideo = pathVideo
@@ -12,10 +12,10 @@ class ImageVehicle:
         self._apparitionTime = apparitionTime
         self._id = id
 
-    def _get_image(self)->np.ndarray:
+    def _get_image(self)->str:
         return self._image
 
-    def _set_image(self,image):
+    def _set_image(self,image:str):
         sys.stderr.write("Write access forbidden for \"image\"\n")
 
     def _get_pathVideo(self)->str:
@@ -43,12 +43,13 @@ class ImageVehicle:
         sys.stderr.write("Write access forbidden for \"id\"\n")
 
     def __str__(self):
+        image = "Image: " + self.image + ", "
         path = "Path: " + self.pathVideo + ", "
         desc = "Descriptor: " + str(self.descriptor) + ", "
         apptime = "ApparitionTime: " + str(self.apparitionTime) + ", "
         id = "ID: " + str(self.id) + "\n"
 
-        return path + desc + apptime + id
+        return image + path + desc + apptime + id
 
     image = property(_get_image, _set_image)
     pathVideo = property(_get_pathVideo, _set_pathVideo)
@@ -62,12 +63,10 @@ class ImageVehicle:
 # python3 ImageVehicle.py
 if __name__ == '__main__':
 
-    # A 4pixel image for example
-    img = np.array([[[0.1,12,255],[15,98,212]],[[0,12,255],[15,98,212]]])
     # year, months, day, hour, minute, second
     time = ((2020,12,25,23,00,00))
     # build ImageVehicle
-    iv = ImageVehicle(img,"/example",time,18)
+    iv = ImageVehicle("./img.png","/example",time,18)
 
     # set a descriptor (see _set_descriptor(self,descriptor:float))
     iv.descriptor = 42.4
