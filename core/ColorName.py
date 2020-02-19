@@ -19,7 +19,7 @@ class ColorName:
         exc = ExtractColor()
         rgbcolor = exc.getColorRGB(imagefullpath)
         return 1 - np.linalg.norm(np.array(rgbcolor) - np.array(self._ref_RGBcolor))/(np.sqrt(255*255*3))
-
+    
 
 if __name__ == '__main__':
     ref = "../data/VeRi_with_plate/image_query/0005_c004_00077625_0.jpg"

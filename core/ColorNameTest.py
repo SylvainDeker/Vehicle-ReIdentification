@@ -61,14 +61,20 @@ class ColorNameTest:
         # print(hist)
         # print("Label dominant:")
         label_dominant = np.argmax(hist)
+        list_label_dominant = np.argsort(hist)[:-2]
+        # print(list_label_dominant)
         # print(label_dominant)
         # print("Couleur pertinante")
         # print(kmeans.cluster_centers_[label_dominant])
-        Xres = np.empty((hist[label_dominant],3))
-        ctr = 0
 
+        lenXres = 0
+        for idx in list_label_dominant:
+            lenXres = lenXres + hist[idx]
+
+        Xres = np.empty((lenXres,3))
+        ctr = 0
         for i in range(len(desc)):
-            if res[i]==label_dominant:
+            if res[i] in list_label_dominant:
                 Xres[ctr] = desc[i]
                 ctr+=1
 
@@ -86,7 +92,7 @@ class ColorNameTest:
             img = cn.preprocessing(ArrayOfImageVehicle[i])
             desc = self.extract_patchs(img)
             # self.fitKMeansTest(desc,8)
-            Xres,label_dominant = cn.bow_process(desc,8)
+            Xres,label_dominant = cn.bow_process(desc,16)
             # cv.imwrite("test_Xres.png",np.resize(Xres,(len(Xres),1,3)))
             colors[i] = cn.resultColor(Xres)
             print(i)
@@ -156,20 +162,20 @@ class ColorNameTest:
 
 
 if __name__ == '__main__':
-    # img = "../data/VeRi_with_plate/image_query/0006_c015_00022375_0.jpg"
+    img = "../data/VeRi_with_plate/image_query/0006_c015_00022375_0.jpg"
     # img = "../data/VeRi_with_plate/image_query/0300_c013_00078770_0.jpg"
     # img = "../data/VeRi_with_plate/image_query/0002_c002_00030600_0.jpg"
     # img = "../data/VeRi_with_plate/image_query/0063_c016_00007580_0.jpg"
     # img = "../data/VeRi_with_plate/image_query/0172_c011_00078830_0.jpg"
-    #
-    #
+
+
     # iv = ImageVehicle(img,"/chemin/video",((0,0,0,0,0,0)),42)
     # img = cv.imread(img)
     # cn = ColorNameTest()
     # img = cn.preprocessing(iv)
-    # cv.imwrite("test_ref.png",img)
+    # cv.imwrite("testref.png",img)
     # desc = cn.extract_patchs(img)
-    # cv.imwrite("test_desc.png",np.resize(desc,(desc.shape[0],1,3)))
+    # cv.imwrite("testdesc.png",np.resize(desc,(desc.shape[0],1,3)))
     #
     # # print(desc)
     # print("----------KMMEANS Test-----------")
@@ -183,62 +189,62 @@ if __name__ == '__main__':
     # gray = [128,128,128]
     # black = [0,0,0]
     # X = np.array([rouge,jaune,vert,bleu,gray,white,black])
-    #
-    #
+
+
     # Xres,label_dominant = cn.bow_process(desc,5)
-    # cv.imwrite("test_Xres.png",np.resize(Xres,(len(Xres),1,3)))
+    # cv.imwrite("testXres.png",np.resize(Xres,(len(Xres),1,3)))
     # result_color = cn.resultColor(Xres)
     # print(result_color)
-    # cv.imwrite("test_ResColor.png",np.resize(result_color,(1,1,3)))
-    #
+    # cv.imwrite("testResColor.png",np.resize(result_color,(1,1,3)))
+
     # displayPLot(desc[0:len(desc):1])
     # displayPLot(Xres[0:len(Xres):1])
 
 
     # print("--------trainColor--------------")
-    # x=6
-    # y=6
-    # cn = ColorNameTest()
-    # arrayOfImageVehicle = buildSetImageVehicle("../data/VeRi_with_plate/testperso/white/",x*y)
-    # colors = cn.extractColorsFromImages(arrayOfImageVehicle)
-    # print(np.linalg.norm(colors - (74,145,63))/(x*y))
-    # cv.imwrite("white.png",np.resize(colors,(x,y,3)))
-    #
-    # cn = ColorNameTest()
-    # arrayOfImageVehicle = buildSetImageVehicle("../data/VeRi_with_plate/testperso/green/",x*y)
-    # colors = cn.extractColorsFromImages(arrayOfImageVehicle)
-    # print(np.linalg.norm(colors - (74,145,63))/(x*y))
-    # cv.imwrite("green.png",np.resize(colors,(x,y,3)))
-    #
-    # cn = ColorNameTest()
-    # arrayOfImageVehicle = buildSetImageVehicle("../data/VeRi_with_plate/testperso/marineblue/",x*y)
-    # colors = cn.extractColorsFromImages(arrayOfImageVehicle)
-    # print(np.linalg.norm(colors - (74,145,63))/(x*y))
-    # cv.imwrite("marineblue.png",np.resize(colors,(x,y,3)))
-    #
-    # cn = ColorNameTest()
-    # arrayOfImageVehicle = buildSetImageVehicle("../data/VeRi_with_plate/testperso/orange/",x*y)
-    # colors = cn.extractColorsFromImages(arrayOfImageVehicle)
-    # print(np.linalg.norm(colors - (74,145,63))/(x*y))
-    # cv.imwrite("orange.png",np.resize(colors,(x,y,3)))
-    #
-    # cn = ColorNameTest()
-    # arrayOfImageVehicle = buildSetImageVehicle("../data/VeRi_with_plate/testperso/red/",x*y)
-    # colors = cn.extractColorsFromImages(arrayOfImageVehicle)
-    # print(np.linalg.norm(colors - (74,145,63))/(x*y))
-    # cv.imwrite("red.png",np.resize(colors,(x,y,3)))
-    #
-    # cn = ColorNameTest()
-    # arrayOfImageVehicle = buildSetImageVehicle("../data/VeRi_with_plate/testperso/black/",x*y)
-    # colors = cn.extractColorsFromImages(arrayOfImageVehicle)
-    # print(np.linalg.norm(colors - (74,145,63))/(x*y))
-    # cv.imwrite("black.png",np.resize(colors,(x,y,3)))
-    #
-    # cn = ColorNameTest()
-    # arrayOfImageVehicle = buildSetImageVehicle("../data/VeRi_with_plate/testperso/yellow/",x*y)
-    # colors = cn.extractColorsFromImages(arrayOfImageVehicle)
-    # print(np.linalg.norm(colors - (74,145,63))/(x*y))
-    # cv.imwrite("yellow.png",np.resize(colors,(x,y,3)))
+    x=10
+    y=10
+    cn = ColorNameTest()
+    arrayOfImageVehicle = buildSetImageVehicle("../data/VeRi_with_plate/testperso/white/",x*y)
+    colors = cn.extractColorsFromImages(arrayOfImageVehicle)
+    print(np.linalg.norm(colors - (74,145,63))/(x*y))
+    cv.imwrite("imgtest/white.png",np.resize(colors,(x,y,3)))
+
+    cn = ColorNameTest()
+    arrayOfImageVehicle = buildSetImageVehicle("../data/VeRi_with_plate/testperso/green/",x*y)
+    colors = cn.extractColorsFromImages(arrayOfImageVehicle)
+    print(np.linalg.norm(colors - (74,145,63))/(x*y))
+    cv.imwrite("imgtest/green.png",np.resize(colors,(x,y,3)))
+
+    cn = ColorNameTest()
+    arrayOfImageVehicle = buildSetImageVehicle("../data/VeRi_with_plate/testperso/marineblue/",x*y)
+    colors = cn.extractColorsFromImages(arrayOfImageVehicle)
+    print(np.linalg.norm(colors - (74,145,63))/(x*y))
+    cv.imwrite("imgtest/marineblue.png",np.resize(colors,(x,y,3)))
+
+    cn = ColorNameTest()
+    arrayOfImageVehicle = buildSetImageVehicle("../data/VeRi_with_plate/testperso/orange/",x*y)
+    colors = cn.extractColorsFromImages(arrayOfImageVehicle)
+    print(np.linalg.norm(colors - (74,145,63))/(x*y))
+    cv.imwrite("imgtest/orange.png",np.resize(colors,(x,y,3)))
+
+    cn = ColorNameTest()
+    arrayOfImageVehicle = buildSetImageVehicle("../data/VeRi_with_plate/testperso/red/",x*y)
+    colors = cn.extractColorsFromImages(arrayOfImageVehicle)
+    print(np.linalg.norm(colors - (74,145,63))/(x*y))
+    cv.imwrite("imgtest/red.png",np.resize(colors,(x,y,3)))
+
+    cn = ColorNameTest()
+    arrayOfImageVehicle = buildSetImageVehicle("../data/VeRi_with_plate/testperso/black/",x*y)
+    colors = cn.extractColorsFromImages(arrayOfImageVehicle)
+    print(np.linalg.norm(colors - (74,145,63))/(x*y))
+    cv.imwrite("imgtest/black.png",np.resize(colors,(x,y,3)))
+
+    cn = ColorNameTest()
+    arrayOfImageVehicle = buildSetImageVehicle("../data/VeRi_with_plate/testperso/yellow/",x*y)
+    colors = cn.extractColorsFromImages(arrayOfImageVehicle)
+    print(np.linalg.norm(colors - (74,145,63))/(x*y))
+    cv.imwrite("imgtest/yellow.png",np.resize(colors,(x,y,3)))
 
 
     # x = 300
@@ -267,19 +273,19 @@ if __name__ == '__main__':
     #
     # print(np.int32(res))
 
-    img = "../data/VeRi_with_plate/image_query/0006_c015_00022375_0.jpg"
+    # img = "../data/VeRi_with_plate/image_query/0006_c015_00022375_0.jpg"
     # img = "../data/VeRi_with_plate/image_query/0300_c013_00078770_0.jpg"
     # img = "../data/VeRi_with_plate/image_query/0002_c002_00030600_0.jpg"
     # img = "../data/VeRi_with_plate/image_query/0063_c016_00007580_0.jpg"
     # img = "../data/VeRi_with_plate/image_query/0172_c011_00078830_0.jpg"
 
-    img2 = cv.imread(img)
-    cv.imwrite("test_ref.png",img2)
-    cn = ColorNameTest()
-    cn.init()
-    iv = ImageVehicle(img,"/chemin/video",((0,0,0,0,0,0)),42)
-    res,score = cn.predict(iv)
-    print("drep:")
-    print(res)
-    print(score/255)
-    cv.imwrite("test_ResColor.png",np.resize(res,(1,1,3)))
+    # img2 = cv.imread(img)
+    # cv.imwrite("testref.png",img2)
+    # cn = ColorNameTest()
+    # cn.init()
+    # iv = ImageVehicle(img,"/chemin/video",((0,0,0,0,0,0)),42)
+    # res,score = cn.predict(iv)
+    # print("drep:")
+    # print(res)
+    # print(score/255)
+    # cv.imwrite("test_ResColor.png",np.resize(res,(1,1,3)))

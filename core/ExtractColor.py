@@ -64,26 +64,39 @@ class ExtractColor:
         # print(label_dominant)
         # print("Couleur pertinante")
         # print(kmeans.cluster_centers_[label_dominant])
-        Xres = np.empty((hist[label_dominant],3))
+        Xres = np.zeros((k,3))
+        div = np.zeros((k,3))
         ctr = 0
 
         for i in range(len(desc)):
-            if res[i]==label_dominant:
-                Xres[ctr] = desc[i]
-                ctr+=1
+            Xres[res[i]] += desc[i]
+            div[res[i]] += 1
+        Xres = Xres / div
+
 
         # cv.imwrite("test3.png",np.resize(Xres,(16,1,3)))
         return Xres,label_dominant
 
-    def resultColor(self,Xres):
+    def resultColor(self,Xres,label_dominant):
+        firstCol = Xres[label_dominant]
+        ctr =1
+        for i in range(len(Xres)):
+            if i!= label_dominant:
+                if np.linalg.norm(Xres[i]-firstCol) < 30:
+                    firstCol += Xres[i]
+                    # print(i)
+                    # print(firstCol/ctr)
+                    ctr +=1
+
         moyenne = np.mean(Xres,axis=0)
-        return moyenne
+        return firstCol/ctr
 
     def getColorBGR(self,imagefullpath):
         img = self.load(imagefullpath)
         desc = self.extract_patchs(img)
-        Xres,_ = self.bow_process(desc,8)
-        bgr = self.resultColor(Xres)
+        Xres,label_dominant = self.bow_process(desc,12)
+        # cv.imwrite("testdesc.png",np.resize(Xres,(8,1,3)))
+        bgr = self.resultColor(Xres,label_dominant)
         return bgr
 
     def getColorRGB(self,imagefullpath):
@@ -91,12 +104,18 @@ class ExtractColor:
         rgb = [bgr[2],bgr[1],bgr[0]]
         return rgb
 
+
 if __name__ == '__main__':
-    img = "../data/VeRi_with_plate/image_query/0006_c015_00022375_0.jpg"
+    # img = "../data/VeRi_with_plate/image_query/0006_c015_00022375_0.jpg"
+    # img = "../data/VeRi_with_plate/image_query/0300_c013_00078770_0.jpg"
+    # img = "../data/VeRi_with_plate/image_query/0002_c002_00030600_0.jpg"
+    # img = "../data/VeRi_with_plate/image_query/0063_c016_00007580_0.jpg"
+    img = "../data/VeRi_with_plate/image_query/0122_c001_00036500_0.jpg"
+    # img = "../data/VeRi_with_plate/image_query/0172_c011_00078830_0.jpg"
+
+    cv.imwrite("testref.png",cv.imread(img))
     ec = ExtractColor()
     res = ec.getColorBGR(img)
-    cv.imwrite("test_ResColor.png",np.resize(res,(1,1,3)))
-    res = ec.getColorRGB(img)
+    # res = ec.getColorRGB(img)
+    cv.imwrite("testResColor.png",np.resize(res,(10,10,3)))
     print(res)
-
-    
