@@ -1,10 +1,5 @@
 import sys
 import numpy as np
-from ImageVehicle import ImageVehicle
-from buildSetImageVehicle import buildSetImageVehicle
-from displayPLot import displayPLot
-from displayPLot import displayPLotRGB
-from histoPLot import histoPLot
 import cv2 as cv
 from sklearn.cluster import KMeans
 import pickle
