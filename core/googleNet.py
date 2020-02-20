@@ -5,7 +5,7 @@ def saveSemantic(imageName,features):
   np.savetxt(imageName,features)
 
 def prepareSemanticDataSet(featureExtractor):
-  for file in os.listdir("./vehicule/"):
+  for file in os.listdir("./VeRi_with_plate/image_train/"):
     img = image.load_img(file, target_size=(IMG_HEIGHT, IMG_WIDTH))
     x = image.img_to_array(img)
     x = np.expand_dims(x, axis=0)
@@ -25,8 +25,7 @@ def googleNetScore(img_path,featureExtractor):
   for file in os.listdir("./semanticFolder/"):
     semanticScore = semanticScore.append(distance.euclidean(features,getSemantic(file)))
     name = name.append(file)
-  listeTrie = list(zip(semanticScore, name))
-  newListe = sorted(listeTrie, key=lambda score: score[0])
+  newListe = list(zip(semanticScore, name))
   return(newListe)
 
 featureExtractor = load_model("./featureExtractor_model.hdf5")
