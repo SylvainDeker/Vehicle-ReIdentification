@@ -26,26 +26,26 @@ def testerCreationFichiersDes(cheminImage,cheminRepDes,indDIm,indFIm,nomsImage):
     print "\tTemps de calcul des descripteurs Sift par image : " + str(fin-debut) + " secondes\n"
     return nomsFichierDes
 
-def testerExtractionDictionnaire(cheminRepDes,nomsFichierDes,indDIm,indFIm):
+def testerExtractionDictionnaire(cheminRepDes,nomsFichierDes,indDIm,indFIm,pas):
     debut = time.time()
-    dico = dSift.extraireDico(cheminRepDes,nomsFichierDes,indDIm,indFIm)
+    dico = dSift.extraireDico(cheminRepDes,nomsFichierDes,indDIm,indFIm,pas)
     fin = time.time()
     print "Temps d'extraction des valeurs pour creation du dictionnaire" + str(fin-debut) + "secondes"
     print ("Taille du dictionnaire = " + str(dico.shape) + "\n")
     print type(dico)
     return dico
 
-def testerKMeans(dico,k):
+def testerKMeans(dico,k,bs):
     #Creation du Modele d'apprentissage non supervise
     debut = time.time()
-    dSift.calculerClassesDescripteurs(dico,k)
+    dSift.calculerClassesDescripteurs(dico,k,bs)
     fin = time.time()
     print "\tTemps de calcul des k centroides : " + str(fin-debut) + " secondes\n"
     # return kmeans
 
-def testerCalculHistoGSift(nomsImage,cheminImage,cheminRepDesBOWSIFT,k,nbImgTester):
+def testerCalculHistoGSift(nomsImage,cheminImage,cheminRepDesBOWSIFT,k,kmeans,nbImgTester):
         debut = time.time()
-        dSift.calculerHistogrammeEntrainement(nomsImage,cheminImage,cheminRepDesBOWSIFT,k,nbImgTester)
+        dSift.calculerHistogrammeEntrainement(nomsImage,cheminImage,cheminRepDesBOWSIFT,kmeans,k,nbImgTester)
         fin = time.time()
 
         print "\tTemps de calcul des" + str(nbImgTester) + "descripteurs BOW-SIFT  : " + str(fin-debut) + " secondes\n"
@@ -54,9 +54,9 @@ def testerCalculHistoGSift(nomsImage,cheminImage,cheminRepDesBOWSIFT,k,nbImgTest
 
         return nomsFichierBOWSIFT
 
-def testerExtraireBOWSIFT(cheminRepDesBOWSIFT,nomsFichierBOWSIFT,indDIm,indFIm):
+def testerExtraireBOWSIFT(cheminRepDesBOWSIFT,nomsFichierBOWSIFT,indDIm,indFIm,pas):
     debut = time.time()
-    listeHistoG = dSift.listerDesBOWSIFT(cheminRepDesBOWSIFT,nomsFichierBOWSIFT,indDIm,indFIm)
+    listeHistoG = dSift.listerDesBOWSIFT(cheminRepDesBOWSIFT,nomsFichierBOWSIFT,indDIm,indFIm,pas)
     fin = time.time()
     print "\tTemps d'extraction des" + str(indFIm) + "descripteurs BOW-SIFT  : " + str(fin-debut) + " secondes\n"
     print "Nb histoG " + str(len(listeHistoG)) + " = Nombre d'image " + str(indFIm)
@@ -65,17 +65,19 @@ def testerExtraireBOWSIFT(cheminRepDesBOWSIFT,nomsFichierBOWSIFT,indDIm,indFIm):
     return listeHistoG
 
 
-def testerReconnaissanceImage(cheminTest,k):
+def testerReconnaissanceImage(cheminTest,kmeans,k):
         #Tester la reconnaissance image
         debut = time.time()
-        histoGtest = dSift.calculerHistogrammeImage(cheminTest,k)
+        histoGtest = dSift.calculerHistogrammeImage(cheminTest,,kmeans,k)
         fin = time.time()
         print "\tTemps de calcul du descripteur BOW-SIFT de l'image test : " + str(fin-debut) + " secondes\n"
         return histoGtest
 
 def testerCalculScoreSift(listeHistoG,histoGtest):
         debut = time.time()
-        scores = dSift.calculerScoresSift(listeHistoG,histoGtest)
+        scores = []
+        for i in range(0,len(listeHistoG)):
+            scores.append(dSift.calculerScoresSift(listeHistoG,histoGtest))
         fin = time.time()
         print "\tTemps de calcul des scores de distance euclidienne : " + str(fin-debut) + " secondes\n"
         print scores
@@ -87,27 +89,27 @@ def testerFonctionsSift():
     cheminTest = '../data/VeRi_with_plate/image_test/0002_c002_00030600_0.jpg'
     cheminRepDes = '../data/ressources/descripteursSift'
     cheminRepDesBOWSIFT = '../data/ressources/descripteursBOWSift'
-    nbImgTester = 5
-    #nbImgTester = os.listdir(cheminImage)
     indDIm = 0
-    # indFIm = len(os.listdir(cheminImage))
-    indFIm = 5
-    k = 1000
-
+    indFIm = len(os.listdir(cheminImage))
+    pas = 4
+    k = 10000
+    bs = (indFIm / pas) * 3
     nomsImage = f.listerContenuFichier(cheminFichier)
 
     nomsFichierDes = testerCreationFichiersDes(cheminImage,cheminRepDes,indDIm,indFIm,nomsImage)
-    dico = testerExtractionDictionnaire(cheminRepDes,nomsFichierDes,indDIm,indFIm)
+    # nomsFichierDes = f.listerContenuRep(cheminRepDes)
+    dico = testerExtractionDictionnaire(cheminRepDes,nomsFichierDes,indDIm,indFIm,pas)
 
-    testerKMeans(dico,k)
+    testerKMeans(dico,k,bs)
+    # kmeans = pickle.load(open("../data/ressources/modeleBOWSIFT.pkl","rb"))
 
-    nomsFichierBOWSIFT = testerCalculHistoGSift(nomsImage,cheminImage,cheminRepDesBOWSIFT,k,nbImgTester)
+    nomsFichierBOWSIFT = testerCalculHistoGSift(nomsImage,cheminImage,cheminRepDesBOWSIFT,kmeans,k,indFIm)
     # nomsFichierBOWSIFT = os.listdir(cheminRepDesBOWSIFT)
-    listeHistoG = testerExtraireBOWSIFT(cheminRepDesBOWSIFT,nomsFichierBOWSIFT,indDIm,indFIm)
-    histoGtest = testerReconnaissanceImage(cheminTest,k)
+    listeHistoG = testerExtraireBOWSIFT(cheminRepDesBOWSIFT,nomsFichierBOWSIFT,indDIm,indFIm,pas)
+
+    histoGtest = testerReconnaissanceImage(cheminTest,kmeans,k)
 
     scores = testerCalculScoreSift(listeHistoG,histoGtest)
-
 
 #main
 testerFonctionsSift()

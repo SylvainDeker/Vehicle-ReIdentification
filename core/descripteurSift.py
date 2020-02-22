@@ -4,10 +4,11 @@ import os
 import pandas as pd
 import time
 import pickle
+import gc
 import traitementFichier as f
 
 from scipy.spatial import distance
-from sklearn.cluster import KMeans
+from sklearn.cluster import MiniBatchKMeans
 
 
 def descripteurSift(cheminImage):
@@ -23,9 +24,6 @@ def extraireDescripteursEntrainement(nomsImage,cheminImage,nbImg):
     #extraire les descripteurs de toutes les images
     print nomsImage[0]
     dico = descripteurSift(cheminImage + "/" + nomsImage[0])
-    print "descripteur 0 "
-    print dico[0]
-    print dico[-1]
     for i in range(1,nbImg):
             print nomsImage[i]
             descripteurs = descripteurSift(cheminImage + "/" + nomsImage[i])
@@ -37,33 +35,30 @@ def extraireDescripteursEntrainement(nomsImage,cheminImage,nbImg):
 def creerFichiersDico(nomsImage,cheminImage,cheminRepDes,indDIm,indFIm):
     for i in range(indDIm,indFIm):
         descripteurs = descripteurSift(cheminImage + "/" + nomsImage[i])
-        # print descripteurs.shape
         nbDes,tailleDes = descripteurs.shape
         f.ecrireFichierDes(descripteurs,nomsImage[i],cheminRepDes,"/desSift_")
 
 
-def extraireDico(cheminRepDes,nomsFichierDes,indDIm,indFIm):
+def extraireDico(cheminRepDes,nomsFichierDes,indDIm,indFIm,pas):
     dico = f.extraireDescripteursFichier(cheminRepDes + "/" + nomsFichierDes[indDIm])
-    # print "Dico = " + str(dico.shape)
-    for i in range(1,indFIm):
+    # print "Dico = " + str(dico.shape
+    for i in range(indDIm,indFIm,pas):
         descripteurs = f.extraireDescripteursFichier(cheminRepDes + "/" + nomsFichierDes[i])
-        # print "descripteur = " + str(descripteurs.shape)
         dico = np.concatenate((dico,descripteurs))
-        # print "Dico = " + str(dico.shape)
     return dico
 
 
-def calculerClassesDescripteurs(dicoDescripteur,k):
+def calculerClassesDescripteurs(dicoDescripteur,k,bs):
     dico = pd.DataFrame(dicoDescripteur)
-    kmeans = KMeans(n_clusters=k).fit(dico)
+    kmeans = MiniBatchKMeans(n_clusters=k,batch_size=bs,verbose=1).fit(dico)
     print kmeans
-    #TODO : Chargement des donnees dans un fichiers pickle
-    pickle.dump(kmeans,open("./data/ressources/modeleBOWSIFT.pkl","wb"))
-    # return kmeans
 
-def calculerHistogrammeImage(cheminImage,k):
-    #TODO extraction kmeans avec pickle
-    kmeans = pickle.load(open("./data/ressources/modeleBOWSIFT.pkl","rb"))
+    pickle.dump(kmeans,open("../data/ressources/modeleBOWSIFT.pkl","wb"))
+
+
+def calculerHistogrammeImage(cheminImage,kmeans,k):
+    kmeans.verbose = False
+
     img = cv.imread(cheminImage,cv.IMREAD_COLOR)
     sift = cv.xfeatures2d.SIFT_create()
     keypoints, descripteurs = sift.detectAndCompute(img,None)
@@ -74,27 +69,31 @@ def calculerHistogrammeImage(cheminImage,k):
     for des in descripteurs:
         ind = kmeans.predict([des])
         histoG[0][ind] += 1
+
+    nbKeyPoints = np.size(keypoints)
+    histoG = histoG / nbKeypoints
+
     return histoG
 
-def calculerHistogrammeEntrainement(nomsImage,cheminImage,cheminRepDesBOWSIFT,k,nbImg):
-    # listeHistoG = []
-
+def calculerHistogrammeEntrainement(nomsImage,cheminImage,cheminRepDesBOWSIFT,kmeans,k,nbImg):
     for i in range(0,nbImg):
         chemin = cheminImage + "/" + nomsImage[i]
-        # listeHistoG.append(calculerHistogrammeImage(chemin,kmeans,k))
-        descripteurBOWSIFT = calculerHistogrammeImage(chemin,k)
+        descripteurBOWSIFT = calculerHistogrammeImage(chemin,kmeans,k)
         f.ecrireFichierDes(descripteurBOWSIFT,nomsImage[i],cheminRepDesBOWSIFT,"/desBOWSift_")
-    # return listeHistoG
 
-def listerDesBOWSIFT(cheminRepDesBOWSIFT,nomsFichierBOWSIFT,indDIm,indFIm):
 
-    # desBOWSIFT = f.extraireDesBOWSIFT(cheminRepDesBOWSIFT + "/" + nomsFichierBOWSIFT[indDIm])
+def listerDesBOWSIFT(cheminRepDesBOWSIFT,nomsFichierBOWSIFT,indDIm,indFIm,pas):
     desBOWSIFT = []
-    for i in range(0,indFIm):
+    for i in range(indDIm,indFIm,pas):
         descripteur = f.extraireDescripteursFichier(cheminRepDesBOWSIFT + "/" + nomsFichierBOWSIFT[i])
         desBOWSIFT.append(descripteur)
 
     return desBOWSIFT
+
+def recupererDesBOWSIFT(nomImage):
+    nomImage = nomImage.strip(".jpg")
+    des = f.extraireDescripteursFichier('../data/ressources/descripteursBOWSift/desBOWSift_' + nomImage + '.txt')
+    return des
 
 def calculerScoresSift(listeHistoG,histoGtest):
     scores = []
