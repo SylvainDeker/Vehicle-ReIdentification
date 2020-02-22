@@ -63,7 +63,7 @@ h4 {
 h5 {
   font-family: 'Arial Black', 'Gadget', sans-serif;
   color: white;
-  text-align: center;
+  text-align: left;
   padding-bottom: 5px;
   margin: 0px 0px 32px 0px;
   font-size: 1.3em;
@@ -110,15 +110,15 @@ footer a:hover {
     margin: 3px;
     padding: 5px;
     border: 1px solid black;
-    background-color: #589c57;
+    
 }
 
 .titlebox3 {
-    color: white;
+    color: #aeea22;
     margin: 3px;
     padding: 5px;
-    border: 1px solid black;
-    background-color: #444444;
+    border-bottom: 1px solid #aeea22;
+    
 }
 
 
