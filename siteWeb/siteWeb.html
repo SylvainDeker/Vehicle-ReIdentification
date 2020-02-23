@@ -78,6 +78,10 @@ Recherche dans l'équipe <a href="https://www.irit.fr/departement/signaux-images
     <h3><span class="titlebox"><b>PRODUCTIONS</b></span></h3></a><br>
 	<h5><span class="titlebox2"><b>L'interface Utilisateur</b></span></h5>
 <p>
+  L'interface utilisateur a été construit avec <a href="https://pypi.org/project/PyQt5/" target="_blank">PyQt5</a> :
+   il s'agit d'un module libre qui permet de lier le langage Python avec la bibliothèque Qt. L'interface à été conçu dans
+   le but de servir de démonstrateur, un algorithme de ré-identification à pour but d'être utilisé sur un ensemble de vidéo
+   en temps réel. Ce n'est pas le but de ce chef d'oeuvre.
 </p>
 	<h5><span class="titlebox2"><b>La méthode FACT</b></span></h5>
 <p>
@@ -87,17 +91,22 @@ Recherche dans l'équipe <a href="https://www.irit.fr/departement/signaux-images
 	enregistrements de vidéos sruveillance.
 	...
 </p>
-	
+
 	<span class="titlebox3"><b>Les Descripteurs Sémantiques</b></span>
 <p>
-	
+	Les descripteurs sémantiques sont les informations importantes d'une image, dans le cas de véhicule cela peut-être le nombre de siège
+  ou la forme des phares. Pour extraires ces descripteurs nous avons utilisé le réseau de neurones
+  convolutif GoogleNet en utilisant les poids du jeu de données
+  <a href="http://www.image-net.org/" target="_blank">imageNet</a> auquel nous avons appliqué un réglage fin avec les données VeRi.
+  Une fois l'entrainement du réseau terminé les descripteurs sémantiques sont obtenues en récupérant
+   les valeurs de l'avant dernière couche du réseau de neurones lors de la classification de l'image.
 </p>
-	
+
 	<span class="titlebox3"><b>Les Descripteurs de Couleurs</b></span>
 <p>
 
 </p>
-	
+
 	<span class="titlebox3"><b>Les Descripteurs de Textures</b></span>
 <p>
 
@@ -105,7 +114,8 @@ Recherche dans l'équipe <a href="https://www.irit.fr/departement/signaux-images
 
 	<span class="titlebox3"><b>Les Scores FACT</b></span>
 <p>
-
+  Le score FACT consiste à faire la somme pondérés des distances,
+  entre l'image recherché et l'ensemble des images, des différents descripteurs.
 </p>
 
 </div>
