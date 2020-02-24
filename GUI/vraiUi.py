@@ -75,9 +75,9 @@ def displayResultImage():
     text = firstColumnInRow.text() # content of this
     changeLabelImage(window.imgRes,'./'+text)
 
-class MainWindow(Ui_MainWindow):
-    def __init__(self):
-        super().__init__()
+class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
+    def __init__(self, *args, obj=None, **kwargs):
+        super(MainWindow, self).__init__(*args, **kwargs)
         self.setupUi(self)
         self.selectVehicleButton.clicked.connect(openFileNameDialog)
         self.startReid.clicked.connect(reIdentificationPlaceHolder)
@@ -115,4 +115,4 @@ numberOfResultsToDisplay = 3
 resultsFile = './resultats.xml'
 
 window.show()
-sys.exit(app.exec_())
+app.exec()
