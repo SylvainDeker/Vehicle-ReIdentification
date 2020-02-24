@@ -1,4 +1,10 @@
 import sys
+
+import ../core/fact
+import ../core/descripteurSift as sift
+import ../core/traitementFichier as f
+import ../core/googleNet as gn
+
 from PyQt5 import QtCore,QtWidgets,QtGui, uic
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QTableWidget,QTableWidgetItem
@@ -48,29 +54,20 @@ def openFileNameDialog():
 
 def reIdentificationPlaceHolder():
     print('Lancement de la réidentification')
-    #On lit les résultats dans le fichier
-    #Les résultats sont stockés sous la forme tableau de tableau
-    #Les sous tableaux sont constitués de 2 éléments : le nom de fichier et sa distance FACT à l'image source
-    fileLine=0
-    fileData = []
-    with open(resultsFile, "r") as f:
-        for line in f.readlines():
-            fileLine+=1
-            fileData+=[(line.rstrip('\n')).split()]
+    listeFactTriee = testerFact(fileName,nomsImage,listeDesBOWSIFT,featureExtractor)
 
     #Si on à moins de résultas que le nombre de top(1 ou 3 ou 5)
-    if fileLine>numberOfResultsToDisplay:
+    if len(listeFactTriee)>numberOfResultsToDisplay:
         max=numberOfResultsToDisplay
     else:
-        max=fileLine
+        max=len(listeFactTriee)
 
-    #print(fileData[0])
     initTableResult(window.resultsTable,max)
 
     for i in range(0,max):
-        data = fileData[i][0].split('_')
-        print(fileData[i][1])
-        fillLineTable(window.resultsTable,i,data[0],data[1],fileData[i][0],fileData[i][1])
+        data = listeFactTriee[i][0].split('_')
+        print(listeFactTriee[i][1])
+        fillLineTable(window.resultsTable,i,data[0],data[1],listeFactTriee[i][0],listeFactTriee[i][1])
 
 def displayResultImage():
     row = window.resultsTable.currentRow() # Index of Row
@@ -89,6 +86,26 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
 app = QtWidgets.QApplication(sys.argv)
 window = MainWindow()
+
+cheminImage = '../data/VeRi_with_plate/image_train'
+cheminFichier = '../data/VeRi_with_plate/name_train.txt'
+cheminRepDesBOWSIFT = '../data/ressources/descripteursBOWSift'
+indDIm = 0
+indFIm = len(f.listerContenuFichier(cheminFichier))
+pas = 4
+
+nomsImage = f.listerContenuFichier(cheminFichier)
+nomsFichierBOWSIFT = f.listerContenuRep(cheminRepDesBOWSIFT)
+debut = time.time()
+listeDesBOWSIFT = pickle.load(open("../data/ressources/listeDesBOWSIFT.pkl","rb"))
+fin = time.time()
+print ("Temps de chargement de la liste des descripteurs BOW-SIFT : " + str(fin-debut) + " secondes")
+
+debut = time.time()
+featureExtractor = gn.initModel()
+fin = time.time()
+print ("Temps de chargement du modele GoogleNet : " + str(fin-debut) + " secondes")
+
 
 changeLabelImage(window.img,'./placeholder2.png')
 changeLabelImage(window.imgRes,'./placeholder2.png')
