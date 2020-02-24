@@ -11,7 +11,7 @@ def calculerFact(scoreCN,scoreSift,scoreGoogleNet):
     return score
 
 
-def listerScoresFact(imageCherchee,listeImagesRef,listeDesBOWSIFT,featureExtractor):
+def listerScoresFact(imageCherchee,listeImagesRef,listeDesBOWSIFT,featureExtractor,pas):
     listeFact = []
 
     #Calcul score de distance GoogleNet
@@ -31,7 +31,7 @@ def listerScoresFact(imageCherchee,listeImagesRef,listeDesBOWSIFT,featureExtract
     fin = time.time()
     print ("Temps de calcul des scores BOWSIFT : " + str(fin-debut) + " secondes\n")
 
-    for i in range(0,len(listeImagesRef),10):
+    for i in range(0,len(listeImagesRef),pas):
         scoreGoogleNet, nomIm  = listeGoogleNet[i]
         # scoreGoogleNet = 0
 
@@ -41,8 +41,9 @@ def listerScoresFact(imageCherchee,listeImagesRef,listeDesBOWSIFT,featureExtract
         scoreCN = cn.compareTo(imageCherchee)
 
         score = calculerFact(scoreCN,listeScoresSift[i],scoreGoogleNet)
+
         listeFact.append((listeImagesRef[i],score))
-#        print i
+        print (i)
 
     return listeFact
 

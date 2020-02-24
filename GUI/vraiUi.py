@@ -4,6 +4,10 @@ import fact
 import descripteurSift as sift
 import traitementFichier as f
 import googleNet as gn
+import testsFact as tF
+
+import time
+import pickle
 
 from PyQt5 import QtCore,QtWidgets,QtGui, uic
 from PyQt5.QtGui import QPixmap
@@ -46,6 +50,7 @@ def fillLineTable(table,line,data0,data1,data2,data3):
 def openFileNameDialog():
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
+        global fileName
         fileName, _ = QFileDialog.getOpenFileName(window,"Selectionner un vehicule", "","Images files (*.jpg)", options=options)
         if fileName:
             print(fileName)
@@ -54,7 +59,8 @@ def openFileNameDialog():
 
 def reIdentificationPlaceHolder():
     print('Lancement de la reidentification')
-    listeFactTriee = testerFact(fileName,nomsImage,listeDesBOWSIFT,featureExtractor)
+    print("2{}".format(fileName))
+    listeFactTriee = tF.testerFact(fileName,nomsImage,listeDesBOWSIFT,featureExtractor,20)
 
     #Si on a moins de resultas que le nombre de top(1 ou 3 ou 5)
     if len(listeFactTriee)>numberOfResultsToDisplay:
@@ -76,7 +82,7 @@ def displayResultImage():
     changeLabelImage(window.imgRes,'./'+text)
 
 class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
-    def __init__(self, *args, obj=None, **kwargs):
+    def __init__(self, *args, **kwargs):
         super(MainWindow, self).__init__(*args, **kwargs)
         self.setupUi(self)
         self.selectVehicleButton.clicked.connect(openFileNameDialog)
@@ -93,6 +99,8 @@ cheminRepDesBOWSIFT = '../data/ressources/descripteursBOWSift'
 indDIm = 0
 indFIm = len(f.listerContenuFichier(cheminFichier))
 pas = 4
+# global fileName
+fileName = ""
 
 nomsImage = f.listerContenuFichier(cheminFichier)
 nomsFichierBOWSIFT = f.listerContenuRep(cheminRepDesBOWSIFT)
@@ -115,4 +123,4 @@ numberOfResultsToDisplay = 3
 resultsFile = './resultats.xml'
 
 window.show()
-app.exec()
+app.exec_()

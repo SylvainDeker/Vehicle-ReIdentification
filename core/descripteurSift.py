@@ -71,7 +71,7 @@ def calculerHistogrammeImage(cheminImage,kmeans,k):
         histoG[0][ind] += 1
 
     nbKeyPoints = np.size(keypoints)
-    histoG = histoG / nbKeypoints
+    # histoG = histoG / nbKeypoints
 
     return histoG
 

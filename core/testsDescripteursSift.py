@@ -68,7 +68,7 @@ def testerExtraireBOWSIFT(cheminRepDesBOWSIFT,nomsFichierBOWSIFT,indDIm,indFIm,p
 def testerReconnaissanceImage(cheminTest,kmeans,k):
         #Tester la reconnaissance image
         debut = time.time()
-        histoGtest = dSift.calculerHistogrammeImage(cheminTest,,kmeans,k)
+        histoGtest = dSift.calculerHistogrammeImage(cheminTest,kmeans,k)
         fin = time.time()
         print "\tTemps de calcul du descripteur BOW-SIFT de l'image test : " + str(fin-debut) + " secondes\n"
         return histoGtest
@@ -112,4 +112,4 @@ def testerFonctionsSift():
     scores = testerCalculScoreSift(listeHistoG,histoGtest)
 
 #main
-testerFonctionsSift()
+# testerFonctionsSift()

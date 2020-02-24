@@ -56,7 +56,6 @@ def prepareSemanticDataSet(featureExtractor):
 
 def googleNetScore(img_path,featureExtractor):
   semanticScore = []
-  print (type(semanticScore))
   name = []
   img = image.load_img(img_path, target_size=(IMG_HEIGHT, IMG_WIDTH))
   x = image.img_to_array(img)
