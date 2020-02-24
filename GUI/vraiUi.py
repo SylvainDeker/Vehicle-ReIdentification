@@ -1,9 +1,9 @@
 import sys
-
-import ../core/fact
-import ../core/descripteurSift as sift
-import ../core/traitementFichier as f
-import ../core/googleNet as gn
+sys.path.append('../core/')
+import fact
+import descripteurSift as sift
+import traitementFichier as f
+import googleNet as gn
 
 from PyQt5 import QtCore,QtWidgets,QtGui, uic
 from PyQt5.QtGui import QPixmap
@@ -13,19 +13,19 @@ from PyQt5.QtCore import pyqtSlot
 
 from ui import Ui_MainWindow
 
-#Cette fonction prend en paramètre : un label et une location d'une image
+#Cette fonction prend en parametre : un label et une location d une image
 #Elle modifie le background du label avec l'image
 def changeLabelImage(widget,fileLocation):
     pixmap = QPixmap(fileLocation)
     widget.setPixmap(pixmap)
 
-#Cette fonction prend en paramètre : un tableau et un entier
+#Cette fonction prend en parametre : un tableau et un entier
 #Elle initialise le tableau avec le nombre de ligne = l'entier
-#Elle initialise également la partie colonne et gère l'édition des valeurs
+#Elle initialise egalement la partie colonne et gere l'edition des valeurs
 def initTableResult(table,n):
     table.setRowCount(n)
     table.setColumnCount(4)
-    labels=['Id véhicule','Id caméra','Nom du fichier','Score']
+    labels=['Id vehicule','Id camera','Nom du fichier','Score']
     table.setHorizontalHeaderLabels(labels)
     header = table.horizontalHeader()
     header.setSectionResizeMode(0, QtWidgets.QHeaderView.ResizeToContents)
@@ -35,8 +35,8 @@ def initTableResult(table,n):
 
     window.resultsTable.setEditTriggers(QtWidgets.QTableWidget.NoEditTriggers)
 
-#Cette fonction prend en paramètre : un tableau , un entier et 4 données
-#Elle initialise la ligne(entier) du tableau avec les données fournit
+#Cette fonction prend en parametre : un tableau , un entier et 4 donnees
+#Elle initialise la ligne(entier) du tableau avec les donnees fournit
 def fillLineTable(table,line,data0,data1,data2,data3):
     table.setItem(line,0, QTableWidgetItem(data0))
     table.setItem(line,1, QTableWidgetItem(data1))
@@ -46,17 +46,17 @@ def fillLineTable(table,line,data0,data1,data2,data3):
 def openFileNameDialog():
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
-        fileName, _ = QFileDialog.getOpenFileName(window,"Sélectionner un véhicule", "","Images files (*.jpg)", options=options)
+        fileName, _ = QFileDialog.getOpenFileName(window,"Selectionner un vehicule", "","Images files (*.jpg)", options=options)
         if fileName:
             print(fileName)
             changeLabelImage(window.img,fileName)
             window.startReid.setEnabled(True)
 
 def reIdentificationPlaceHolder():
-    print('Lancement de la réidentification')
+    print('Lancement de la reidentification')
     listeFactTriee = testerFact(fileName,nomsImage,listeDesBOWSIFT,featureExtractor)
 
-    #Si on à moins de résultas que le nombre de top(1 ou 3 ou 5)
+    #Si on a moins de resultas que le nombre de top(1 ou 3 ou 5)
     if len(listeFactTriee)>numberOfResultsToDisplay:
         max=numberOfResultsToDisplay
     else:
@@ -75,9 +75,9 @@ def displayResultImage():
     text = firstColumnInRow.text() # content of this
     changeLabelImage(window.imgRes,'./'+text)
 
-class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
-    def __init__(self, *args, obj=None, **kwargs):
-        super(MainWindow, self).__init__(*args, **kwargs)
+class MainWindow(Ui_MainWindow):
+    def __init__(self):
+        super().__init__()
         self.setupUi(self)
         self.selectVehicleButton.clicked.connect(openFileNameDialog)
         self.startReid.clicked.connect(reIdentificationPlaceHolder)
@@ -115,4 +115,4 @@ numberOfResultsToDisplay = 3
 resultsFile = './resultats.xml'
 
 window.show()
-app.exec()
+sys.exit(app.exec_())

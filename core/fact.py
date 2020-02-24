@@ -42,7 +42,7 @@ def listerScoresFact(imageCherchee,listeImagesRef,listeDesBOWSIFT,featureExtract
 
         score = calculerFact(scoreCN,listeScoresSift[i],scoreGoogleNet)
         listeFact.append((listeImagesRef[i],score))
-        print i
+#        print i
 
     return listeFact
 
