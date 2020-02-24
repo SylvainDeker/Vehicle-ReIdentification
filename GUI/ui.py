@@ -45,7 +45,7 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "Interface de ré-identification"))
         self.selectVehicleButton.setText(_translate("MainWindow", "Séléctionner un véhicule"))
         self.startReid.setText(_translate("MainWindow", "Lancer la réidentification"))
         self.img.setText(_translate("MainWindow", "TextLabel"))

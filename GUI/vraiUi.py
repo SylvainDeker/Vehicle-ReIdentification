@@ -40,10 +40,11 @@ def fillLineTable(table,line,data0,data1,data2,data3):
 def openFileNameDialog():
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
-        fileName, _ = QFileDialog.getOpenFileName(window,"QFileDialog.getOpenFileName()", "","Images files (*.jpg)", options=options)
+        fileName, _ = QFileDialog.getOpenFileName(window,"Sélectionner un véhicule", "","Images files (*.jpg)", options=options)
         if fileName:
             print(fileName)
-        changeLabelImage(window.img,fileName)
+            changeLabelImage(window.img,fileName)
+            window.startReid.setEnabled(True)
 
 def reIdentificationPlaceHolder():
     print('Lancement de la réidentification')
@@ -91,6 +92,7 @@ window = MainWindow()
 
 changeLabelImage(window.img,'./placeholder2.png')
 changeLabelImage(window.imgRes,'./placeholder2.png')
+window.startReid.setEnabled(False)
 
 numberOfResultsToDisplay = 3
 resultsFile = './resultats.xml'
