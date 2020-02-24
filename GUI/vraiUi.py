@@ -73,13 +73,14 @@ def reIdentificationPlaceHolder():
     for i in range(0,max):
         data = listeFactTriee[i][0].split('_')
         print(listeFactTriee[i][1])
-        fillLineTable(window.resultsTable,i,data[0],data[1],listeFactTriee[i][0],listeFactTriee[i][1])
+        score = f"{listeFactTriee[i][1]:.3f}"
+        fillLineTable(window.resultsTable,i,data[0],data[1],listeFactTriee[i][0],score)
 
 def displayResultImage():
     row = window.resultsTable.currentRow() # Index of Row
     firstColumnInRow = window.resultsTable.item(row, 2) # returns QTableWidgetItem
     text = firstColumnInRow.text() # content of this
-    changeLabelImage(window.imgRes,'./'+text)
+    changeLabelImage(window.imgRes,cheminImage+'/'+text)
 
 class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def __init__(self, *args, **kwargs):
