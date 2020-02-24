@@ -84,6 +84,7 @@ Recherche dans l'équipe <a href="https://www.irit.fr/departement/signaux-images
    en temps réel. Ce n'est pas le but de ce chef d'oeuvre.
 </p>
 	<h5><span class="titlebox2"><b>La méthode FACT</b></span></h5>
+<!--
 <p>
 	La méthode <b>FACT</b> , pour <b>F</b>usion of <b>A</b>ttribute and
 	<b>C</b>olors <b>F</b>eatures , a été proposé par ... pour répondre
@@ -91,7 +92,7 @@ Recherche dans l'équipe <a href="https://www.irit.fr/departement/signaux-images
 	enregistrements de vidéos sruveillance.
 	...
 </p>
-
+-->
 	<span class="titlebox3"><b>Les Descripteurs Sémantiques</b></span>
 <p>
 	Les descripteurs sémantiques sont les informations importantes d'une image, dans le cas de véhicule cela peut-être le nombre de siège
@@ -104,18 +105,32 @@ Recherche dans l'équipe <a href="https://www.irit.fr/departement/signaux-images
 
 	<span class="titlebox3"><b>Les Descripteurs de Couleurs</b></span>
 <p>
-
+  La méthode BOW-CN permet de calculer un descripteur de couleur sous la forme
+  d’un vecteur obtenu par le calcul d’un histogramme sur 250 classes obtenues par un
+  algorithme de k-moyenne. Les descripteurs permettant de calculer l’histogramme
+  sont les valeurs des canaux des pixels.
 </p>
 
 	<span class="titlebox3"><b>Les Descripteurs de Textures</b></span>
 <p>
-
+  La méthode BOW-SIFT permet de calculer un descripteur de texture pour une image à partir
+  d’un modèle d’apprentissage non supervisé de 10000 classes calculées à partir des descripteurs
+  sift des points d’intérêts des images de la base d’apprentissage.
+  On calcul alors un histogramme à 10000 classes qui compte le nombre de point d’intérêts
+   prédit par classe pour une image, cet histogramme est le descripteur de texture BOW-SIFT.
 </p>
 
 	<span class="titlebox3"><b>Les Scores FACT</b></span>
 <p>
   Le score FACT consiste à faire la somme pondérés des distances,
   entre l'image recherché et l'ensemble des images, des différents descripteurs.
+  Les pondérations sont les suivantes :
+  <ul>
+    <li> 0,1 pour SIFT </li>
+    <li> 0,2 pour CN </li>
+    <li> 0,7 pour GoogleNet </li>
+  </ul>
+  Les parties les plus déterminantes de la ré-identification sont donc obtenues avec le réseau de neurones.
 </p>
 
 </div>
@@ -130,7 +145,6 @@ Recherche dans l'équipe <a href="https://www.irit.fr/departement/signaux-images
             <td><h2><b>Références</b></h2></td>
             <td><b>Phases</b></td>
             <td><b>Rapports</b></td>
-            <td><b>Diapositives</b></td>
         </tr>
         <tr>
 
@@ -138,31 +152,27 @@ Recherche dans l'équipe <a href="https://www.irit.fr/departement/signaux-images
             <td><a href="https://ieeexplore.ieee.org/document/7553002" target="_blank">
                 [1] X. Liu, W. Liu, H. Ma, H. Fu, <i>Large-scale vehicle re-identification in urban surveillance videos</i> (2016)</a></td>
             <td>Méthodes et Algorithmes</td>
-            <td><a name="rapports" href="http://fsi-dpt-info.univ-tlse3.fr/master-igai/2018-g1/reports/MBR-LMA.pdf" target="_blank"><img src="siteWeb_fichiers/report.png" alt="Report logo" class="center" width="25"></a></td>
-            <td><a href="http://fsi-dpt-info.univ-tlse3.fr/master-igai/2018-g1/reports/MBR-LMA-Support.pdf" target="_blank"><img src="siteWeb_fichiers/support.png" alt="Report logo" class="center" width="25"></a></td>
+            <td><a name="rapports" href="./siteWeb_fichiers/MethodeEtAlgorithme.pdf" target="_blank"><img src="siteWeb_fichiers/report.png" alt="Report logo" class="center" width="25"></a></td>
         </tr>
         <tr>
             <td><b>Deker Sylvain</b></td>
             <td><a href="https://arxiv.org/pdf/1804.02767" target="_blank">
                 [2] J. Redmon, A. Farhadi, <i>YOLOv3: An Incremental Improvement</i> (2018)</a></td>
             <td>Spécifications</td>
-            <td><a href="http://fsi-dpt-info.univ-tlse3.fr/master-igai/2018-g1/reports/MBR-Spec.pdf" target="_blank"><img src="siteWeb_fichiers/report.png" alt="Report logo" class="center" width="25"></a></td>
-            <td><a href="http://fsi-dpt-info.univ-tlse3.fr/master-igai/2018-g1/reports/MBR-Spec-Support.pdf" target="_blank"><img src="siteWeb_fichiers/support.png" alt="Report logo" class="center" width="25"></a></td>
+            <td><a href="./siteWeb_fichiers/Specifications.pdf" target="_blank"><img src="siteWeb_fichiers/report.png" alt="Report logo" class="center" width="25"></a></td>
         </tr>
         <tr>
             <td><b>Moussa Nahor</b></td>
             <td><a href="https://arxiv.org/pdf/1506.08959" target="_blank">
                 [3] L. Yang, P. Luo, C. C. Loy, X. Tang, <i>A Large-Scale Car Dataset for Fine-Grained Categorization and Verification</i> (2015)</a></td>
             <td>Conception</td>
-            <td><a href="http://fsi-dpt-info.univ-tlse3.fr/master-igai/2018-g1/reports/MBR-Conception.pdf" target="_blank"><img src="siteWeb_fichiers/report.png" alt="Report logo" class="center" width="25"></a></td>
-            <td><a href="http://fsi-dpt-info.univ-tlse3.fr/master-igai/2018-g1/reports/MBR-Conception-Support.pdf" target="_blank"><img src="siteWeb_fichiers/support.png" alt="Report logo" class="center" width="25"></a></td>
+            <td><a href="./siteWeb_fichiers/Conception_Re_id.pdf" target="_blank"><img src="siteWeb_fichiers/report.png" alt="Report logo" class="center" width="25"></a></td>
         </tr>
         <tr>
             <td><b></b></td>
             <td></td>
 			<td>Recette</td>
-            <td><a href="http://fsi-dpt-info.univ-tlse3.fr/master-igai/2018-g1/reports/MBR-Recette.pdf" target="_blank"><img src="siteWeb_fichiers/report.png" alt="Report logo" class="center" width="25"></a></td>
-            <td><a href="http://fsi-dpt-info.univ-tlse3.fr/master-igai/2018-g1/reports/MBR-Recette-Support.pdf" target="_blank"><img src="siteWeb_fichiers/support.png" alt="Report logo" class="center" width="25"></a></td>
+            <td><a href="./siteWeb_fichiers/Recette.pdf" target="_blank"><img src="siteWeb_fichiers/report.png" alt="Report logo" class="center" width="25"></a></td>
         </tr>
         <tr>
             <td><b></b></td>
