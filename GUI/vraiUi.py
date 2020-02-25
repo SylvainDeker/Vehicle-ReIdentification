@@ -60,7 +60,7 @@ def openFileNameDialog():
 def reIdentificationPlaceHolder():
     print('Lancement de la reidentification')
     print("2{}".format(fileName))
-    listeFactTriee = tF.testerFact(fileName,nomsImage,listeDesBOWSIFT,featureExtractor,20)
+    listeFactTriee = tF.testerFact(fileName,nomsImage,listeDesBOWSIFT,featureExtractor,4)
 
     #Si on a moins de resultas que le nombre de top(1 ou 3 ou 5)
     if len(listeFactTriee)>numberOfResultsToDisplay:
@@ -73,7 +73,7 @@ def reIdentificationPlaceHolder():
     for i in range(0,max):
         data = listeFactTriee[i][0].split('_')
         print(listeFactTriee[i][1])
-        score = f"{listeFactTriee[i][1]:.3f}"
+        score = str(listeFactTriee[i][1])[:4]
         fillLineTable(window.resultsTable,i,data[0],data[1],listeFactTriee[i][0],score)
 
 def displayResultImage():
@@ -107,6 +107,7 @@ nomsImage = f.listerContenuFichier(cheminFichier)
 nomsFichierBOWSIFT = f.listerContenuRep(cheminRepDesBOWSIFT)
 debut = time.time()
 listeDesBOWSIFT = pickle.load(open("../data/ressources/listeDesBOWSIFT.pkl","rb"))
+
 fin = time.time()
 print ("Temps de chargement de la liste des descripteurs BOW-SIFT : " + str(fin-debut) + " secondes")
 
@@ -120,7 +121,7 @@ changeLabelImage(window.img,'./placeholder2.png')
 changeLabelImage(window.imgRes,'./placeholder2.png')
 window.startReid.setEnabled(False)
 
-numberOfResultsToDisplay = 3
+numberOfResultsToDisplay = 15
 resultsFile = './resultats.xml'
 
 window.show()

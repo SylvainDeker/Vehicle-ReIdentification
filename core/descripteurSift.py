@@ -84,11 +84,13 @@ def calculerHistogrammeEntrainement(nomsImage,cheminImage,cheminRepDesBOWSIFT,km
 
 def listerDesBOWSIFT(cheminRepDesBOWSIFT,nomsFichierBOWSIFT,indDIm,indFIm,pas):
     desBOWSIFT = []
+    nomsImages = []
     for i in range(indDIm,indFIm,pas):
+        nomsImages.append(nomsFichierBOWSIFT[i].strip(".txt") + ".jpg")
         descripteur = f.extraireDescripteursFichier(cheminRepDesBOWSIFT + "/" + nomsFichierBOWSIFT[i])
         desBOWSIFT.append(descripteur)
-
-    return desBOWSIFT
+    liste = list(zip(desBOWSIFT, nomsImages))
+    return liste
 
 def recupererDesBOWSIFT(nomImage):
     nomImage = nomImage.strip(".jpg")
@@ -97,6 +99,10 @@ def recupererDesBOWSIFT(nomImage):
 
 def calculerScoresSift(listeHistoG,histoGtest):
     scores = []
-    for des in listeHistoG:
+    nomImages = []
+    for i in range(0,len(listeHistoG)):
+        des , nom = listeHistoG[i]
+        nomImages.append(nom)
         scores.append(distance.euclidean(des,histoGtest))
-    return scores
+    liste = list(zip(scores,nomImages))
+    return liste

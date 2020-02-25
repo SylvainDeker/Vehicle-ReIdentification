@@ -1,4 +1,4 @@
-from ColorName2 import ColorName2
+from ColorName import ColorName
 import googleNet as gn
 import descripteurSift as sift
 import time
@@ -31,20 +31,23 @@ def listerScoresFact(imageCherchee,listeImagesRef,listeDesBOWSIFT,featureExtract
     fin = time.time()
     print ("Temps de calcul des scores BOWSIFT : " + str(fin-debut) + " secondes\n")
 
+    googleNetTrie = sorted(listeGoogleNet, key=lambda nom: nom[1])
+    siftTrie = sorted(listeScoresSift, key=lambda nom: nom[1])
+
     for i in range(0,len(listeImagesRef),pas):
-        scoreGoogleNet, nomIm  = listeGoogleNet[i]
-        # scoreGoogleNet = 0
+        scoreGoogleNet, nomIm  = googleNetTrie[i]
 
-        cn = ColorName2()
-        cn.loadimgref( '../data/VeRi_with_plate/image_train/' + listeImagesRef[i])
+        scoreSift , nomImS = siftTrie[i]
+        # scoreSift = 0
+        cn = ColorName()
+        cn.loadimgref( '../data/VeRi_with_plate/image_train/' + nomIm)
         # retourne un score entre 0 et 1, 1 = ressemblance absolue
-        scoreCN = cn.compareTo(imageCherchee)
+        scoreCN = 1-cn.compareTo(imageCherchee)
+        # scoreCN = 0
 
-        score = calculerFact(scoreCN,listeScoresSift[i],scoreGoogleNet)
-
-        listeFact.append((listeImagesRef[i],score))
-        print (i)
-
+        score = calculerFact(scoreCN,scoreSift,scoreGoogleNet)
+        listeFact.append((nomIm,score))
+        print (str(i) + " -> " + nomIm)
     return listeFact
 
 

@@ -26,14 +26,17 @@ def testerFact(imageCherchee,listeImagesRef,listeDesBOWSIFT,featureExtractor,pas
 # cheminTest = '../data/VeRi_with_plate/image_test/0006_c014_00024880_0.jpg'
 # cheminRepDesBOWSIFT = '../data/ressources/descripteursBOWSift'
 # indDIm = 0
-# # indFIm = len(f.listerContenuFichier(cheminFichier))
-# pas = 15
-#
-# nomsImage = f.listerContenuFichier(cheminFichier)
+# indFIm = len(f.listerContenuFichier(cheminFichier))
+# pas = 1
+# #
+# # nomsImage = f.listerContenuFichier(cheminFichier)
 # nomsFichierBOWSIFT = f.listerContenuRep(cheminRepDesBOWSIFT)
-# # listeDesBOWSIFT = sift.listerDesBOWSIFT(cheminRepDesBOWSIFT,nomsFichierBOWSIFT,indDIm,indFIm,pas)
-# # pickle.dump(listeDesBOWSIFT,open("../data/ressources/listeDesBOWSIFT.pkl","wb"))
+#
+# listeDesBOWSIFT = sift.listerDesBOWSIFT(cheminRepDesBOWSIFT,nomsFichierBOWSIFT,indDIm,indFIm,pas)
+#
+# pickle.dump(listeDesBOWSIFT,open("../data/ressources/listeDesBOWSIFT.pkl","wb"))
 # debut = time.time()
+
 # listeDesBOWSIFT = pickle.load(open("../data/ressources/listeDesBOWSIFT.pkl","rb"))
 # fin = time.time()
 # print ("Temps de chargement de la liste des descripteurs BOW-SIFT : " + str(fin-debut) + " secondes")
