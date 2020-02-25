@@ -1,4 +1,4 @@
-from ColorName import ColorName
+from ColorName2 import ColorName2
 import googleNet as gn
 import descripteurSift as sift
 import time
@@ -35,7 +35,7 @@ def listerScoresFact(imageCherchee,listeImagesRef,listeDesBOWSIFT,featureExtract
         scoreGoogleNet, nomIm  = listeGoogleNet[i]
         # scoreGoogleNet = 0
 
-        cn = ColorName()
+        cn = ColorName2()
         cn.loadimgref( '../data/VeRi_with_plate/image_train/' + listeImagesRef[i])
         # retourne un score entre 0 et 1, 1 = ressemblance absolue
         scoreCN = cn.compareTo(imageCherchee)

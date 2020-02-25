@@ -5,12 +5,11 @@ from sklearn.cluster import KMeans
 import pickle
 
 
-class ExtractColor:
-    """docstring for ExtractColor."""
+class ExtractColor2:
+    """docstring for ExtractColor2."""
 
-    def __init__(self,k=5,lim = 30):
+    def __init__(self,k=10):
         self.k = k
-        self.distlim = lim
 
     def load(self,imagefullpath):
         img = cv.imread(imagefullpath)
@@ -82,37 +81,51 @@ class ExtractColor:
             Xres[res[i]] += descbgr[i]
             div[res[i]] += 1
         Xres = Xres / div
+        Xres = np.int32(Xres)
 
 
-        # cv.imwrite("test3.png",np.resize(Xres,(16,1,3)))
-        return Xres,label_dominant
+        res1 = np.concatenate((Xres,np.reshape(hist,(len(Xres),1))),axis=1)
 
-    def resultColor(self,Xres,label_dominant):
-        firstCol = Xres[label_dominant]
-        ctr =1
-        for i in range(len(Xres)):
-            if i!= label_dominant:
-                if np.linalg.norm(Xres[i]-firstCol) < self.distlim:
-                    firstCol += Xres[i]
-                    # print(i)
-                    # print(firstCol/ctr)
-                    ctr +=1
+        # print(res1)
+        dtype=[]
+        res2 = np.sort(res1,axis=1)
+        # print(res2)
 
-        return firstCol/ctr
+        dtype = [('Blue',int),('Green',int),('Red',int),('Hist',int)]
+        value = []
+        for i in range(k):
+            value.append((Xres[i][0],Xres[i][1],Xres[i][2],hist[i]))
+
+        new_value = np.array(value,dtype=dtype)
+
+        # print(new_value)
+
+        new_value = np.sort(new_value,order=['Hist'])
+
+        # print(new_value)
+
+        result = np.empty((self.k,3))
+        # print(result)
+        for i in range(k):
+            result[i][0] = new_value[i][0]
+            result[i][1] = new_value[i][1]
+            result[i][2] = new_value[i][2]
+
+        return result
 
     def getColorBGR(self,imagefullpath):
         img = self.load(imagefullpath)
         desc,descbgr = self.extract_patchs(img)
-        Xres,label_dominant = self.bow_process(desc,descbgr,self.k)
-        # cv.imwrite("testdesc.png",np.resize(Xres,(self.k,1,3)))
+        result = self.bow_process(desc,descbgr,self.k)
 
-        bgr = self.resultColor(Xres,label_dominant)
-        return bgr
 
-    def getColorRGB(self,imagefullpath):
-        bgr = self.getColorBGR(imagefullpath)
-        rgb = [bgr[2],bgr[1],bgr[0]]
-        return rgb
+
+        return result
+
+    # def getColorRGB(self,imagefullpath):
+    #     bgr = self.getColorBGR(imagefullpath)
+    #     rgb = [bgr[2],bgr[1],bgr[0]]
+    #     return rgb
 
 
 if __name__ == '__main__':
@@ -124,8 +137,8 @@ if __name__ == '__main__':
     # img = "../data/VeRi_with_plate/image_query/0172_c011_00078830_0.jpg"
 
     cv.imwrite("testref.png",cv.imread(img))
-    ec = ExtractColor()
+    ec = ExtractColor2()
     res = ec.getColorBGR(img)
     # res = ec.getColorRGB(img)
-    cv.imwrite("testResColor.png",np.resize(res,(10,10,3)))
+    cv.imwrite("testdesc.png",np.resize(res,(ec.k,1,3)))
     print(res)
